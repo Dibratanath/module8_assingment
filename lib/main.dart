@@ -1,100 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Profile App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return const MaterialApp(
+      home: Scaffold(
+        body: Homepage(),
       ),
-      home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class Homepage extends StatelessWidget {
+  const Homepage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        centerTitle: false,
-      ),
-      body: SingleChildScrollView(
-        child: ResponsiveGridRow(
-          children: [
-            ResponsiveGridCol(
-                xl: 4, lg: 4, md: 4, sm: 4, xs: 12,
-                child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        radius: 150,
-                        backgroundImage: NetworkImage("https://hips.hearstapps.com/hmg-prod/images/cute-cat-photos-1593441022.jpg?crop=0.670xw:1.00xh;0.167xw,0&resize=640:*"),
-                      ),
-                    ),
-                )
-            ),
-            ResponsiveGridCol(
-              xl: 8, lg: 8, md: 8, sm: 8, xs: 12,
-                  child: Container(
-                    child: ResponsiveGridRow(
-                      children: [
-                        ResponsiveGridCol(
-                            child: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Title(
-                                    color: Colors.black,
-                                    child: LayoutBuilder(
-                                      builder: (BuildContext context, BoxConstraints contraints){
-                                        if(contraints.maxWidth>=500){
-                                          return Text("Lal Gulu", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),);
-                                        } else{
-                                          return Center(child: Text("Lal Gulu", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),));
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
-                            )
-                        ),
-                        ResponsiveGridCol(
-                            child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                  child: Text("With the actual path to your images. This code demonstrates a responsive layout that rearranges its widgets based on the device orientation."),
-                              ),
-                            )
-                        ),
-                        ResponsiveGridCol(
-                            child: Container(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                  ),
-                                  itemCount: 6,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Image.network('https://www.shutterstock.com/shutterstock/photos/2208001797/display_1500/stock-photo-chic-cat-charisma-wearing-coat-wearing-sunglasses-funny-fashion-pic-as-wallpaper-poster-t-2208001797.jpg'),
-                                    );
-                                  },
-                                ),
-                            )
-                        ),
-                      ],
-                    ),
-                  ),
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text("Profile"),
         ),
-      )
+        body: SingleChildScrollView(
+            child: orientation == Orientation.portrait
+                ? const Column(
+              children: [ProfilePic(), PhotoGraphy()],
+            )
+                : const Row(
+              children: [ProfilePic(), PhotoGraphy()],
+            )));
+  }
+}
+
+class PhotoGraphy extends StatelessWidget {
+  const PhotoGraphy({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
+    final size = MediaQuery.of(context).size;
+    return SizedBox(
+      width: orientation == Orientation.portrait
+          ? size.width / 1.2
+          : size.width / 1.7,
+      child: Column(
+        children: [
+          const Center(
+              child: Text(
+                "John Doe",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              )),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              "Lorem ipsum dolor sit amet,consectetur adipiscing elit.Sed aliquet turpis eu enim tristiqe,in iaculis libero porttitor.",
+            ),
+          ),
+          SizedBox(
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing:
+                10.0, // Adjust this value to reduce main axis spacing
+                crossAxisSpacing: 10.0,
+              ),
+              itemCount: 6,
+              itemBuilder: (context, index) {
+                return Image.network(
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qDv4FRumzdmbhxJZ3zFdNG8hKU3BbLYjL9VGorvS9Oue-C86Akn9PWmJCQxbI4LCmaQ&usqp=CAU');
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ProfilePic extends StatelessWidget {
+  const ProfilePic({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: CircleAvatar(
+          radius: orientation == Orientation.portrait ? 200 : size.width / 6,
+          backgroundImage: const NetworkImage(
+              "https://images.pexels.com/photos/225157/pexels-photo-225157.jpeg?cs=srgb&dl=pexels-fox-225157.jpg&fm=jpg"),
+        ),
+      ),
     );
   }
 }
